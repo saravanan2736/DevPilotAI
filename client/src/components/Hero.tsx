@@ -1,9 +1,14 @@
 import { ArrowRight } from "lucide-react";
-
+import { motion } from "framer-motion";
 function Hero() {
   return (
     <section className="flex min-h-[80vh] items-center justify-center px-6">
-      <div className="max-w-4xl text-center">
+        <motion.div
+           className="max-w-4xl text-center"
+           initial={{ opacity: 0, y: 30 }}
+           animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
         <p className="mb-4 text-sm font-medium text-blue-500">
           AI-powered developer workspace
         </p>
@@ -23,7 +28,7 @@ function Hero() {
           Start building
           <ArrowRight className="h-4 w-4" />
         </button>
-      </div>
+      </motion.div>
     </section>
   );
 }
