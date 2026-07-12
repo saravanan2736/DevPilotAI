@@ -27,30 +27,66 @@ function Chat() {
       userMessage,
     ]);
 
+    const messageToSend = input;
+
     setInput("");
     setIsLoading(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch(
+        "http://localhost:3000/api/chat",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: messageToSend,
+          }),
+        }
+      );
 
-    const aiMessage: Message = {
-      id: Date.now() + 1,
-      text: "I'm DevPilot AI. Real AI integration is coming next 🚀",
-      sender: "ai",
-    };
+      if (!response.ok) {
+        throw new Error("Failed to get response");
+      }
 
-    setMessages((currentMessages) => [
-      ...currentMessages,
-      aiMessage,
-    ]);
+      const data = await response.json();
 
-    setIsLoading(false);
+      const aiMessage: Message = {
+        id: Date.now() + 1,
+        text: data.reply,
+        sender: "ai",
+      };
+
+      setMessages((currentMessages) => [
+        ...currentMessages,
+        aiMessage,
+      ]);
+    } catch (error) {
+      console.error(error);
+
+      const errorMessage: Message = {
+        id: Date.now() + 1,
+        text: "Unable to connect to DevPilot server.",
+        sender: "ai",
+      };
+
+      setMessages((currentMessages) => [
+        ...currentMessages,
+        errorMessage,
+      ]);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
     <DashboardLayout>
       <div className="flex h-[calc(100vh-4rem)] flex-col">
         <div>
-          <h1 className="text-3xl font-bold">AI Chat</h1>
+          <h1 className="text-3xl font-bold">
+            AI Chat
+          </h1>
 
           <p className="mt-2 text-zinc-400">
             Ask developer questions and get focused AI assistance.
@@ -71,8 +107,8 @@ function Chat() {
                   </h2>
 
                   <p className="mt-2 text-sm leading-6 text-zinc-400">
-                    Ask about code, errors, architecture, APIs, or development
-                    concepts.
+                    Ask about code, errors, architecture, APIs, or
+                    development concepts.
                   </p>
                 </div>
               </div>
@@ -121,7 +157,9 @@ function Chat() {
               <input
                 type="text"
                 value={input}
-                onChange={(event) => setInput(event.target.value)}
+                onChange={(event) =>
+                  setInput(event.target.value)
+                }
                 onKeyDown={(event) => {
                   if (event.key === "Enter") {
                     handleSend();
