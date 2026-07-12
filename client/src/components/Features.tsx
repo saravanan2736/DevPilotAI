@@ -6,6 +6,7 @@ import {
   Database,
   Braces,
 } from "lucide-react";
+import FeatureCard from "./FeatureCard";
 
 const features = [
   {
@@ -55,26 +56,14 @@ function Features() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {features.map((feature) => {
-            const Icon = feature.icon;
-
-            return (
-              <div
-                key={feature.title}
-                className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-6 transition hover:border-zinc-700"
-              >
-                <Icon className="h-6 w-6 text-blue-500" />
-
-                <h3 className="mt-5 text-lg font-semibold text-white">
-                  {feature.title}
-                </h3>
-
-                <p className="mt-2 leading-7 text-zinc-400">
-                  {feature.description}
-                </p>
-              </div>
-            );
-          })}
+          {features.map((feature) => (
+		<FeatureCard
+    key={feature.title}
+    icon={feature.icon}
+    title={feature.title}
+    description={feature.description}
+  />
+          ))}
         </div>
       </div>
     </section>
