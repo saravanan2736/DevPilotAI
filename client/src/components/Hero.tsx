@@ -1,5 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
+
 function Hero() {
   return (
     <section className="flex min-h-[80vh] items-center justify-center px-6">
@@ -23,11 +25,13 @@ function Hero() {
           Review code, understand errors, and generate developer essentials
           with one intelligent workspace.
         </p>
-
-        <button className="mx-auto mt-8 flex items-center gap-2 rounded-lg bg-white px-6 py-3 font-medium text-black transition hover:bg-zinc-200">
-          Start building
-          <ArrowRight className="h-4 w-4" />
-        </button>
+        <Link
+  to="/dashboard"
+  className="mx-auto mt-8 flex w-fit items-center gap-2 rounded-lg bg-white px-6 py-3 font-medium text-black transition hover:bg-zinc-200"
+>
+  Start building
+  <ArrowRight className="h-4 w-4" />
+</Link>
       </motion.div>
     </section>
   );
