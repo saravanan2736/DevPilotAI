@@ -1,10 +1,10 @@
+import Navbar from "./components/Navbar";
+
 function App() {
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center">
-      <h1 className="text-6xl font-bold text-blue-500">
-        DevPilot AI 🚀
-      </h1>
-    </div>
+    <main className="min-h-screen bg-[#09090B]">
+      <Navbar />
+    </main>
   );
 }
 
