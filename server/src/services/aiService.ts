@@ -17,8 +17,8 @@ function wait(milliseconds: number) {
   );
 }
 
-export async function generateAIResponse(
-  message: string
+async function generateWithRetry(
+  prompt: string
 ): Promise<string> {
   const maxAttempts = 3;
 
@@ -26,21 +26,7 @@ export async function generateAIResponse(
     try {
       const result = await ai.models.generateContent({
         model: "gemini-3-flash-preview",
-        contents: `
-You are DevPilot AI, a developer-focused AI assistant.
-
-Your job is to help developers:
-- understand programming concepts
-- debug errors
-- review code
-- understand APIs
-- improve software architecture
-
-Give clear, practical, developer-friendly answers.
-
-User question:
-${message}
-        `,
+        contents: prompt,
       });
 
       return (
@@ -68,4 +54,63 @@ ${message}
   }
 
   throw new Error("AI response failed");
+}
+
+export async function generateAIResponse(
+  message: string
+): Promise<string> {
+  return generateWithRetry(`
+You are DevPilot AI, a developer-focused AI assistant.
+
+Help developers:
+- understand programming concepts
+- debug errors
+- review code
+- understand APIs
+- improve software architecture
+
+Give clear, practical, developer-friendly answers.
+
+User question:
+${message}
+  `);
+}
+
+export async function explainError(
+  errorMessage: string
+): Promise<string> {
+  return generateWithRetry(`
+You are DevPilot AI Error Explainer.
+
+Analyze the developer error below.
+
+Explain the response using these sections:
+
+## What the error means
+
+Explain the error in simple developer-friendly words.
+
+## Most likely cause
+
+Explain the probable root cause.
+
+## How to fix it
+
+Give clear numbered steps.
+
+## Example fix
+
+Provide a code example when relevant.
+
+## Prevention tip
+
+Explain how the developer can avoid this problem later.
+
+Do not invent missing project details.
+If the error lacks enough context, clearly mention what additional information is needed.
+
+Developer error:
+
+${errorMessage}
+  `);
 }

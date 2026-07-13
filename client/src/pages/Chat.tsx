@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { Bot, Send, User } from "lucide-react";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import DashboardLayout from "../layouts/DashboardLayout";
+import MarkdownRenderer from "../components/MarkdownRenderer";
 
 type Message = {
   id: number;
@@ -51,7 +48,7 @@ function Chat() {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to get response");
+        throw new Error("Failed to get AI response");
       }
 
       const data = await response.json();
@@ -71,7 +68,7 @@ function Chat() {
 
       const errorMessage: Message = {
         id: Date.now() + 1,
-        text: "Unable to connect to DevPilot server.",
+        text: "DevPilot AI is temporarily unavailable. Please try again shortly.",
         sender: "ai",
       };
 
@@ -131,80 +128,7 @@ function Chat() {
 
                     <div className="min-w-0 flex-1 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">
                       {message.sender === "ai" ? (
-                        <ReactMarkdown
-                          remarkPlugins={[remarkGfm]}
-                          components={{
-                            h1: ({ children }) => (
-                              <h1 className="mb-3 mt-4 text-2xl font-bold text-white">
-                                {children}
-                              </h1>
-                            ),
-                            h2: ({ children }) => (
-                              <h2 className="mb-3 mt-4 text-xl font-bold text-white">
-                                {children}
-                              </h2>
-                            ),
-                            h3: ({ children }) => (
-                              <h3 className="mb-2 mt-4 text-lg font-semibold text-white">
-                                {children}
-                              </h3>
-                            ),
-                            p: ({ children }) => (
-                              <p className="mb-3 text-sm leading-7 text-zinc-200">
-                                {children}
-                              </p>
-                            ),
-                            ul: ({ children }) => (
-                              <ul className="mb-3 list-disc space-y-1 pl-6 text-sm text-zinc-200">
-                                {children}
-                              </ul>
-                            ),
-                            ol: ({ children }) => (
-                              <ol className="mb-3 list-decimal space-y-1 pl-6 text-sm text-zinc-200">
-                                {children}
-                              </ol>
-                            ),
-                            strong: ({ children }) => (
-                              <strong className="font-semibold text-white">
-                                {children}
-                              </strong>
-                            ),
-                            code: ({ children, className }) => {
-                              const match = /language-(\w+)/.exec(
-                                className || ""
-                              );
-
-                              if (match) {
-                                return (
-                                  <SyntaxHighlighter
-                                    language={match[1]}
-                                    style={vscDarkPlus}
-                                    PreTag="div"
-                                    customStyle={{
-                                      margin: 0,
-                                      borderRadius: "0.5rem",
-                                    }}
-                                  >
-                                    {String(children).replace(/\n$/, "")}
-                                  </SyntaxHighlighter>
-                                );
-                              }
-
-                              return (
-                                <code className="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-sm text-blue-300">
-                                  {children}
-                                </code>
-                              );
-                            },
-                            pre: ({ children }) => (
-                              <div className="mb-4 overflow-x-auto">
-                                {children}
-                              </div>
-                            ),
-                          }}
-                        >
-                          {message.text}
-                        </ReactMarkdown>
+                        <MarkdownRenderer content={message.text} />
                       ) : (
                         <p className="whitespace-pre-wrap text-sm leading-6 text-zinc-200">
                           {message.text}
