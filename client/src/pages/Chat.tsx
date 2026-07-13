@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Bot, Send, User } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import DashboardLayout from "../layouts/DashboardLayout";
 
 type Message = {
@@ -168,15 +170,23 @@ function Chat() {
                               </strong>
                             ),
                             code: ({ children, className }) => {
-                              const isCodeBlock = className?.startsWith(
-                                "language-"
+                              const match = /language-(\w+)/.exec(
+                                className || ""
                               );
 
-                              if (isCodeBlock) {
+                              if (match) {
                                 return (
-                                  <code className="block overflow-x-auto rounded-lg bg-zinc-950 p-4 font-mono text-sm text-zinc-200">
-                                    {children}
-                                  </code>
+                                  <SyntaxHighlighter
+                                    language={match[1]}
+                                    style={vscDarkPlus}
+                                    PreTag="div"
+                                    customStyle={{
+                                      margin: 0,
+                                      borderRadius: "0.5rem",
+                                    }}
+                                  >
+                                    {String(children).replace(/\n$/, "")}
+                                  </SyntaxHighlighter>
                                 );
                               }
 
@@ -187,9 +197,9 @@ function Chat() {
                               );
                             },
                             pre: ({ children }) => (
-                              <pre className="mb-4 overflow-x-auto">
+                              <div className="mb-4 overflow-x-auto">
                                 {children}
-                              </pre>
+                              </div>
                             ),
                           }}
                         >
