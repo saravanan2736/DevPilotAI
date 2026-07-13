@@ -1,7 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { GoogleGenAI } from "@google/genai";
+import { generateAIResponse } from "./services/aiService.js";
 
 dotenv.config();
 
@@ -10,16 +10,6 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
-
-const apiKey = process.env.GEMINI_API_KEY;
-
-if (!apiKey) {
-  throw new Error("GEMINI_API_KEY is missing");
-}
-
-const ai = new GoogleGenAI({
-  apiKey,
-});
 
 app.get("/", (_request, response) => {
   response.json({
@@ -37,30 +27,13 @@ app.post("/api/chat", async (request, response) => {
   }
 
   try {
-    const result = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `
-You are DevPilot AI, a developer-focused AI assistant.
-
-Your job is to help developers:
-- understand programming concepts
-- debug errors
-- review code
-- understand APIs
-- improve software architecture
-
-Give clear, practical, developer-friendly answers.
-
-User question:
-${message}
-      `,
-    });
+    const reply = await generateAIResponse(message);
 
     response.json({
-      reply: result.text ?? "DevPilot could not generate a response.",
+      reply,
     });
   } catch (error) {
-    console.error("Gemini error:", error);
+    console.error("AI error:", error);
 
     response.status(500).json({
       error: "Failed to generate AI response",
