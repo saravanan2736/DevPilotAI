@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Bot, Send, User } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import DashboardLayout from "../layouts/DashboardLayout";
 
 type Message = {
@@ -84,9 +86,7 @@ function Chat() {
     <DashboardLayout>
       <div className="flex h-[calc(100vh-4rem)] flex-col">
         <div>
-          <h1 className="text-3xl font-bold">
-            AI Chat
-          </h1>
+          <h1 className="text-3xl font-bold">AI Chat</h1>
 
           <p className="mt-2 text-zinc-400">
             Ask developer questions and get focused AI assistance.
@@ -127,10 +127,79 @@ function Chat() {
                       )}
                     </div>
 
-                    <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">
-                      <p className="whitespace-pre-wrap text-sm leading-6 text-zinc-200">
-                        {message.text}
-                      </p>
+                    <div className="min-w-0 flex-1 rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">
+                      {message.sender === "ai" ? (
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={{
+                            h1: ({ children }) => (
+                              <h1 className="mb-3 mt-4 text-2xl font-bold text-white">
+                                {children}
+                              </h1>
+                            ),
+                            h2: ({ children }) => (
+                              <h2 className="mb-3 mt-4 text-xl font-bold text-white">
+                                {children}
+                              </h2>
+                            ),
+                            h3: ({ children }) => (
+                              <h3 className="mb-2 mt-4 text-lg font-semibold text-white">
+                                {children}
+                              </h3>
+                            ),
+                            p: ({ children }) => (
+                              <p className="mb-3 text-sm leading-7 text-zinc-200">
+                                {children}
+                              </p>
+                            ),
+                            ul: ({ children }) => (
+                              <ul className="mb-3 list-disc space-y-1 pl-6 text-sm text-zinc-200">
+                                {children}
+                              </ul>
+                            ),
+                            ol: ({ children }) => (
+                              <ol className="mb-3 list-decimal space-y-1 pl-6 text-sm text-zinc-200">
+                                {children}
+                              </ol>
+                            ),
+                            strong: ({ children }) => (
+                              <strong className="font-semibold text-white">
+                                {children}
+                              </strong>
+                            ),
+                            code: ({ children, className }) => {
+                              const isCodeBlock = className?.startsWith(
+                                "language-"
+                              );
+
+                              if (isCodeBlock) {
+                                return (
+                                  <code className="block overflow-x-auto rounded-lg bg-zinc-950 p-4 font-mono text-sm text-zinc-200">
+                                    {children}
+                                  </code>
+                                );
+                              }
+
+                              return (
+                                <code className="rounded bg-zinc-800 px-1.5 py-0.5 font-mono text-sm text-blue-300">
+                                  {children}
+                                </code>
+                              );
+                            },
+                            pre: ({ children }) => (
+                              <pre className="mb-4 overflow-x-auto">
+                                {children}
+                              </pre>
+                            ),
+                          }}
+                        >
+                          {message.text}
+                        </ReactMarkdown>
+                      ) : (
+                        <p className="whitespace-pre-wrap text-sm leading-6 text-zinc-200">
+                          {message.text}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
